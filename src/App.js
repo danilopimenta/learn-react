@@ -1,20 +1,43 @@
 import React, { Component } from 'react';
-import Header from './Header';
-import InputMagic from './InputMagic';
+import 'whatwg-fetch'
 import './App.css';
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {items: []};
+  }
+  componentWillMount() {
+
+    fetch('http://swapi.co/api/people/?format=json')
+      .then( response => response.json() )
+      .then( ({results: items}) => this.setState({'items':items}) )
+  }
+
+  filter(e) {
+    this.setState({'filter': e.target.value});
+  }
+
   render() {
+
+    let items = this.state.items;
+    if (this.state.filter) {
+      items = items.filter((item) =>
+        item.name.toLowerCase()
+          .includes(this.state.filter.toLowerCase())
+      );
+    }
+
     return (
       <div className="App">
-        {/* <Header /> */}
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <InputMagic />
+        <input type="text" onChange={this.filter.bind(this)}/>
+        {items.map((item, key) =>
+            <Person key={item.name} person={item} />)}
       </div>
     );
   }
 }
+
+const Person = (props) => <h4>{props.person.name}</h4>;
 
 export default App;
