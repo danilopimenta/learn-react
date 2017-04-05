@@ -32,12 +32,14 @@ class App extends Component {
       <div className="App">
         <input type="text" onChange={this.filter.bind(this)}/>
         {items.map((item, key) =>
-            <Person key={item.name} person={item} />)}
+            <PersonString key={item.name} person={item} />)}
       </div>
     );
   }
 }
 
-const Person = (props) => <h4>{props.person.name}</h4>;
+const PersonFunction = (props) => <h4>{ ((name) => name)(props.person.name) }</h4>;
+const PersonArray = (props) => <h4>{["Mrs. ", <span>{props.person.name}</span>, "!"]}</h4>;
+const PersonString = (props) => <h4>{props.person.name}</h4>;
 
 export default App;
