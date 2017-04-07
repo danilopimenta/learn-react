@@ -5,7 +5,7 @@ import './App.css';
 class App extends Component {
   constructor() {
     super();
-    this.state = {items: []};
+    this.state = {items: [], width: 0};
   }
   componentWillMount() {
 
@@ -13,6 +13,18 @@ class App extends Component {
       .then( response => response.json() )
       .then( ({results: items}) => this.setState({'items':items}) )
   }
+
+  componentDidMount() {
+  this.setState(
+    {width: window.innerWidth},
+    () => {
+      window.addEventListener(
+        "resize",
+        ({target}) => this.setState({width: target.innerWidth})
+      )
+    }
+  )
+}
 
   filter(e) {
     this.setState({'filter': e.target.value});
@@ -31,15 +43,22 @@ class App extends Component {
     return (
       <div className="App">
         <input type="text" onChange={this.filter.bind(this)}/>
+        <Width>
+        {minWidth =>
+        this.state.width > minWidth
+          ? <div> more {minWidth} </div>
+          : <div> less {minWidth} </div>
+        }
+        </Width>
         {items.map((item, key) =>
-            <PersonString key={item.name} person={item} />)}
+            <Person key={item.name} person={item} />)}
       </div>
     );
   }
 }
 
-const PersonFunction = (props) => <h4>{ ((name) => name)(props.person.name) }</h4>;
-const PersonArray = (props) => <h4>{["Mrs. ", <span>{props.person.name}</span>, "!"]}</h4>;
-const PersonString = (props) => <h4>{props.person.name}</h4>;
+const Person = (props) => <h4>{["Mrs. ", <span key='span' >{props.person.name}</span>, "!"]}</h4>;
+
+const Width = ({ children }) => children(700);
 
 export default App;
